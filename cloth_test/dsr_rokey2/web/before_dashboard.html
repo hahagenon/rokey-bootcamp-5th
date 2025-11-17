@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>옷 접기 로봇 - 대시보드</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .status-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .status-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .status-label {
+            font-size: 16px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .status-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .robot-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ccc;
+        }
+
+        .status-indicator.waiting {
+            background: #28a745;
+            box-shadow: 0 0 10px #28a745;
+        }
+
+        .status-indicator.working {
+            background: #ffc107;
+            box-shadow: 0 0 10px #ffc107;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-sales {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-sales:hover:not(:disabled) {
+            background: #5568d3;
+        }
+
+        .btn-robot {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-robot:hover:not(:disabled) {
+            background: #218838;
+        }
+
+        .btn-robot.working {
+            background: #ffc107;
+        }
+
+        .timer {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .manual-count {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+
+        /* 관리자 영역 */
+        .admin-section {
+            margin-top: 30px;
+            border-top: 2px dashed #ddd;
+            padding-top: 20px;
+        }
+
+        .admin-toggle {
+            background: #6c757d;
+            color: white;
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .admin-toggle:hover {
+            background: #5a6268;
+        }
+
+        .admin-toggle .arrow {
+            transition: transform 0.3s;
+        }
+
+        .admin-toggle.active .arrow {
+            transform: rotate(180deg);
+        }
+
+        .admin-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .admin-content.active {
+            max-height: 200px;
+            margin-top: 15px;
+        }
+
+        .btn-reset {
+            background: #dc3545;
+            color: white;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn-reset:hover {
+            background: #c82333;
+        }
+
+        .btn-reset:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👕 옷 접기 로봇</h1>
+
+        <!-- 판매 현황 -->
+        <div class="status-card">
+            <div class="status-item">
+                <span class="status-label">오늘 판매</span>
+                <span class="status-value" id="sales-count">0</span>
+            </div>
+        </div>
+
+        <!-- 로봇 완료 -->
+        <div class="status-card">
+            <div class="status-item">
+                <span class="status-label">🤖 로봇 완료</span>
+                <span class="status-value" id="completed-count">0</span>
+            </div>
+        </div>
+
+        <!-- 수동 포장 -->
+        <div class="status-card manual-count">
+            <div class="status-item">
+                <span class="status-label">👤 수동 포장</span>
+                <span class="status-value" id="manual-count">0</span>
+            </div>
+        </div>
+
+        <!-- 로봇 상태 -->
+        <div class="status-card">
+            <div class="status-item">
+                <span class="status-label">로봇 상태</span>
+                <div class="robot-status">
+                    <div class="status-indicator" id="robot-indicator"></div>
+                    <span class="status-text" id="robot-status-text">연결 중...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 버튼 -->
+        <div class="button-group">
+            <button class="btn btn-sales" id="btn-sales" onclick="addSale()">
+                판매 +1
+            </button>
+            <button class="btn btn-robot" id="btn-robot" onclick="startRobot()">
+                로봇 작동 ▶
+            </button>
+            <div class="timer" id="timer"></div>
+        </div>
+
+        <!-- 관리자 영역 -->
+        <div class="admin-section">
+            <button class="admin-toggle" id="admin-toggle" onclick="toggleAdmin()">
+                <span>⚙️ 관리자 설정</span>
+                <span class="arrow">▼</span>
+            </button>
+            <div class="admin-content" id="admin-content">
+                <button class="btn-reset" onclick="resetData()">
+                    🔄 오늘 데이터 초기화
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        // Firebase 설정
+        const firebaseConfig = {
+            apiKey: "AIzaSyA9H-8CK9kv1bqLfjtGXIBCnFDLcWOKzoc",
+            authDomain: "rokey-550f7.firebaseapp.com",
+            databaseURL: "https://rokey-550f7-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "rokey-550f7",
+            storageBucket: "rokey-550f7.firebasestorage.app",
+            messagingSenderId: "493026314766",
+            appId: "1:493026314766:web:cf0db37b4df979f9010a5f"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const robotRef = database.ref('robot');
+
+        // DOM 요소
+        const salesCountEl = document.getElementById('sales-count');
+        const completedCountEl = document.getElementById('completed-count');
+        const manualCountEl = document.getElementById('manual-count');
+        const robotStatusTextEl = document.getElementById('robot-status-text');
+        const robotIndicatorEl = document.getElementById('robot-indicator');
+        const btnRobot = document.getElementById('btn-robot');
+        const timerEl = document.getElementById('timer');
+
+        let isRobotWorking = false;
+
+        // Firebase 실시간 리스닝
+        robotRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (!data) return;
+
+            // 판매 개수
+            const salesCount = data.sales_count || 0;
+            salesCountEl.textContent = salesCount;
+
+            // 완료 개수
+            const completedCount = data.completed_count || 0;
+            completedCountEl.textContent = completedCount;
+
+            // 수동 포장 (판매 - 로봇완료)
+            const manualCount = Math.max(0, salesCount - completedCount);
+            manualCountEl.textContent = manualCount;
+
+            // 로봇 상태
+            const robotStatus = data.robot_status || 'waiting';
+            updateRobotStatus(robotStatus);
+        });
+
+        // 로봇 상태 업데이트
+        function updateRobotStatus(status) {
+            if (status === 'working' || status === 'processing') {
+                robotStatusTextEl.textContent = '작동 중';
+                robotIndicatorEl.className = 'status-indicator working';
+                btnRobot.disabled = true;
+                btnRobot.className = 'btn btn-robot working';
+                btnRobot.textContent = '작동 중...';
+                isRobotWorking = true;
+                startTimer(45); // 45초 타이머
+            } else if (status === 'waiting' || status === 'idle') {
+                robotStatusTextEl.textContent = '대기 중';
+                robotIndicatorEl.className = 'status-indicator waiting';
+                btnRobot.disabled = false;
+                btnRobot.className = 'btn btn-robot';
+                btnRobot.textContent = '로봇 작동 ▶';
+                isRobotWorking = false;
+                timerEl.textContent = '';
+            } else if (status === 'error') {
+                robotStatusTextEl.textContent = '에러 발생';
+                robotIndicatorEl.className = 'status-indicator';
+                btnRobot.disabled = true;
+            }
+        }
+
+        // 타이머 시작
+        function startTimer(seconds) {
+            let remaining = seconds;
+            timerEl.textContent = `남은 시간: ${remaining}초`;
+
+            const interval = setInterval(() => {
+                remaining--;
+                if (remaining > 0) {
+                    timerEl.textContent = `남은 시간: ${remaining}초`;
+                } else {
+                    clearInterval(interval);
+                    timerEl.textContent = '';
+                }
+            }, 1000);
+        }
+
+        // 판매 +1
+        function addSale() {
+            robotRef.child('sales_count').transaction((current) => {
+                return (current || 0) + 1;
+            });
+            console.log('✅ 판매 +1');
+        }
+
+        // 로봇 작동
+        function startRobot() {
+            if (isRobotWorking) {
+                alert('로봇이 이미 작동 중입니다!');
+                return;
+            }
+
+            robotRef.update({
+                robot_command: 'start'
+            });
+            console.log('🤖 로봇 시작 명령 전송');
+        }
+
+        // 관리자 영역 토글
+        function toggleAdmin() {
+            const adminToggle = document.getElementById('admin-toggle');
+            const adminContent = document.getElementById('admin-content');
+            
+            adminToggle.classList.toggle('active');
+            adminContent.classList.toggle('active');
+        }
+
+        // 데이터 초기화
+        function resetData() {
+            const salesCount = document.getElementById('sales-count').textContent;
+            const completedCount = document.getElementById('completed-count').textContent;
+            
+            const confirmed = confirm(
+                `정말 초기화하시겠습니까?\n\n` +
+                `• 판매: ${salesCount}개 → 0개\n` +
+                `• 로봇 완료: ${completedCount}개 → 0개\n\n` +
+                `이 작업은 되돌릴 수 없습니다.`
+            );
+            
+            if (confirmed) {
+                robotRef.update({
+                    sales_count: 0,
+                    completed_count: 0,
+                    robot_status: 'waiting',
+                    robot_command: 'idle'
+                });
+                console.log('🔄 데이터 초기화 완료');
+                alert('✅ 데이터가 초기화되었습니다!');
+            }
+        }
+
+        console.log('📱 대시보드 준비 완료!');
+    </script>
+</body>
+</html>

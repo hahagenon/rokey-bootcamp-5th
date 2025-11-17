@@ -1,0 +1,44 @@
+// 이 코드를 복사해 두세요!
+const firebaseConfig = {
+  apiKey: "...",
+  authDomain: "...",
+  databaseURL: "https://<여러분의-프로젝트-ID>.firebaseio.com",
+  projectId: "...",
+  storageBucket: "...",
+  messagingSenderId: "...",
+  appId: "..."
+};
+
+----
+
+// 이 코드를 복사해 두세요!
+const firebaseConfig = {
+  apiKey: "AIzaSyA23COKtqfPssoby6iU9R5w8YOaxkSXJss",
+  authDomain: "rokey-e9bd2.firebaseapp.com",
+  databaseURL: "https://rokey-e9bd2-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "rokey-e9bd2",
+  storageBucket: "rokey-e9bd2.firebasestorage.app",
+  messagingSenderId: "148369896233",
+  appId: "1:148369896233:web:3e0737fa8615a469f0bd38"
+};
+
+----
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyA9H-8CK9kv1bqLfjtGXIBCnFDLcWOKzoc",
+  authDomain: "rokey-550f7.firebaseapp.com",
+  databaseURL: "https://rokey-550f7-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "rokey-550f7",
+  storageBucket: "rokey-550f7.firebasestorage.app",
+  messagingSenderId: "493026314766",
+  appId: "1:493026314766:web:cf0db37b4df979f9010a5f"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
