@@ -96,41 +96,54 @@ def perform_task():
     # 1회만 실행 (기존 while 루프 제거)
     opengripper()
     movej(posj(-6.95, 3.12, 43.02, -0.07, 133.85, -4.94), radius=0.00, ra=DR_MV_RA_DUPLICATE)
-    wait(1.00)
+    wait(0.50)
     movel(posx(451.46, 197.99, 252.51, 96.19, -179.73, 97.75), radius=0.00, ref=0, mod=DR_MV_MOD_ABS, ra=DR_MV_RA_DUPLICATE)
     closegripper()
-    wait(1.00)
+    wait(0.50)
     movec(posx(453.46, 171.18, 310.12, 154.51, -179.76, 156.86), posx(451.17, 98.68, 346.55, 174.33, -179.14, 178.03), vel=[200.00, 76.50], acc=[800.00, 306.00], radius=0.00, ref=0, angle=[110.00,0.00], ra=DR_MV_RA_DUPLICATE)
-    wait(1.00)
+    wait(0.50)
     opengripper()
-    wait(1.00)
+    wait(0.50)
     movel(posx(453.75, -213.74, 252.23, 154.68, -179.81, 153.08), radius=0.00, ref=0, mod=DR_MV_MOD_ABS, ra=DR_MV_RA_DUPLICATE)
-    wait(1.00)
+    wait(0.50)
     closegripper()
-    wait(1.00)
+    wait(0.50)
     movec(posx(453.28, -174.30, 293.52, 95.73, -172.71, 86.05), posx(451.29, -122.55, 321.28, 96.47, -172.14, 86.51), vel=[200.00, 76.50], acc=[800.00, 306.00], radius=0.00, ref=0, angle=[70.00,0.00], ra=DR_MV_RA_DUPLICATE)
-    wait(1.00)
+    wait(0.50)
     opengripper()
     movej(posj(0.53, 29.50, 84.70, -8.45, 33.41, -83.26), radius=0.00, ra=DR_MV_RA_DUPLICATE)
     closegripper()
-    wait(1.00)
+    wait(0.50)
     movesj([posj(0.53, 29.50, 84.70, -8.44, 33.41, -83.26), posj(0.49, 19.79, 89.04, -8.45, 33.22, -83.26), posj(0.49, 5.57, 98.44, -8.45, 32.31, -83.26), posj(0.07, -15.90, 118.84, -8.45, 22.59, -83.26), posj(0.07, -27.08, 126.55, -8.45, 22.83, -83.26), posj(0.07, -38.78, 133.33, -8.45, 26.27, -83.26)], vel=141.17, acc=510.00)
-    wait(1.00)
+    wait(0.50)
     opengripper()
-    wait(1.00)
-    movesj([posj(0.00, 0.00, 90.00, 0.00, 90.00, 0.00), posj(-0.18, -18.72, 106.63, 0.00, 92.02, 0.00), posj(-4.28, -17.36, 124.77, -0.10, 71.89, -4.00)])
+    wait(0.50)
+    movesj([posj(0.00, 0.00, 90.00, 0.00, 90.00, 0.00), posj(-0.18, -18.72, 106.63, 0.00, 92.02, 0.00), posj(-4.00, -14.82, 123.06, -0.11, 71.06, -3.72)])
     closegripper()
-    wait(1.00)
+    wait(0.50)
 
-    movej(posj(-4.27, -19.76, 100.12, -0.14, 98.94, -4.00), radius=0.00, ra=DR_MV_RA_DUPLICATE)
-    movej(posj(-4.27, -2.42, 86.41, -0.14, 95.51, 86.00), radius=0.00, ra=DR_MV_RA_DUPLICATE)
-    movej(posj(-50.30, 22.26, 61.59, -0.04, 95.88, 40.06), vel=20.00, acc=100.00, radius=0.00, ra=DR_MV_RA_DUPLICATE)
-    movej(posj(-59.81, 54.62, 13.75, 14.83, 133.87, 35.03), vel=50.00, acc=100.00, radius=0.00, ra=DR_MV_RA_DUPLICATE)
-    movej(posj(-45.06, 19.61, 54.33, 19.48, 124.70, 50.13), vel=50.00, acc=100.00, radius=0.00, ra=DR_MV_RA_DUPLICATE)
+    
+ # MoveJNode
+    movej(posj(-4.27, -19.31, 113.36, -0.14, 86.39, -4.00), radius=0.00, ra=DR_MV_RA_DUPLICATE)
+    # MoveJNode
+    movej(posj(-4.25, -1.68, 99.17, -0.14, 82.30, 86.00), vel=60.00, acc=100.00, radius=0.00, ra=DR_MV_RA_DUPLICATE)
+    # MoveJNode
+    movej(posj(-25.63, 2.31, 95.55, -0.20, 82.07, 64.47), vel=30.00, acc=100.00, radius=0.00, ra=DR_MV_RA_DUPLICATE)
+    # MoveJNode
+    movej(posj(-51.58, 23.21, 72.23, -0.11, 84.40, 38.76), vel=5.00, acc=100.00, radius=0.00, ra=DR_MV_RA_DUPLICATE)
+    # MoveJNode
+    movej(posj(-57.88, 50.49, 22.10, 13.13, 125.61, 36.21), vel=50.00, acc=150.00, radius=0.00, ra=DR_MV_RA_DUPLICATE)
+    # MoveJNode
+    movej(posj(-45.06, 19.61, 54.33, 19.48, 124.70, 50.13), vel=50.00, acc=200.00, radius=0.00, ra=DR_MV_RA_DUPLICATE)
+    # MoveJNode
     movej(posj(-4.27, -2.42, 86.41, -0.14, 95.51, -4.00), radius=0.00, ra=DR_MV_RA_DUPLICATE)
-    movej(posj(-4.28, -17.36, 124.77, -0.10, 71.89, -4.00), radius=0.00, ra=DR_MV_RA_DUPLICATE)
+    # MoveJNode
+    movej(posj(-4.00, -14.82, 123.06, -0.11, 71.06, -3.72), radius=0.00, ra=DR_MV_RA_DUPLICATE)
+    # CallNode
     opengripper()
-    wait(1.00)
+    # WaitNode
+    wait(0.50)
+    # MoveJNode
     movej(posj(-6.95, 3.12, 43.02, -0.07, 133.85, -4.94), radius=0.00, ra=DR_MV_RA_DUPLICATE)
     
     print('\n' + '✅' * 20)
@@ -262,3 +275,27 @@ def main(args=None):
 
 if __name__ == "__main__":
     main()
+
+
+#  # MoveJNode
+#     movej(posj(-4.27, -19.31, 113.36, -0.14, 86.39, -4.00), radius=0.00, ra=DR_MV_RA_DUPLICATE)
+#     # MoveJNode
+#     movej(posj(-4.25, -1.68, 99.17, -0.14, 82.30, 86.00), vel=60.00, acc=100.00, radius=0.00, ra=DR_MV_RA_DUPLICATE)
+#     # MoveJNode
+#     movej(posj(-25.63, 2.31, 95.55, -0.20, 82.07, 64.47), vel=30.00, acc=100.00, radius=0.00, ra=DR_MV_RA_DUPLICATE)
+#     # MoveJNode
+#     movej(posj(-51.58, 23.21, 72.23, -0.11, 84.40, 38.76), vel=5.00, acc=100.00, radius=0.00, ra=DR_MV_RA_DUPLICATE)
+#     # MoveJNode
+#     movej(posj(-57.88, 50.49, 22.10, 13.13, 125.61, 36.21), vel=50.00, acc=150.00, radius=0.00, ra=DR_MV_RA_DUPLICATE)
+#     # MoveJNode
+#     movej(posj(-45.06, 19.61, 54.33, 19.48, 124.70, 50.13), vel=50.00, acc=200.00, radius=0.00, ra=DR_MV_RA_DUPLICATE)
+#     # MoveJNode
+#     movej(posj(-4.27, -2.42, 86.41, -0.14, 95.51, -4.00), radius=0.00, ra=DR_MV_RA_DUPLICATE)
+#     # MoveJNode
+#     movej(posj(-4.00, -14.82, 123.06, -0.11, 71.06, -3.72), radius=0.00, ra=DR_MV_RA_DUPLICATE)
+#     # CallNode
+#     opengripper()
+#     # WaitNode
+#     wait(0.50)
+#     # MoveJNode
+#     movej(posj(-6.95, 3.12, 43.02, -0.07, 133.85, -4.94), radius=0.00, ra=DR_MV_RA_DUPLICATE)

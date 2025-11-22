@@ -92,6 +92,24 @@
             animation: pulse 1s infinite;
         }
 
+        .status-indicator.collision {
+            background: #dc3545;
+            box-shadow: 0 0 10px #dc3545;
+            animation: pulse 0.5s infinite;
+        }
+
+        .status-indicator.emergency {
+            background: #ff0000;
+            box-shadow: 0 0 15px #ff0000;
+            animation: pulse 0.3s infinite;
+        }
+
+        .status-indicator.recovering {
+            background: #17a2b8;
+            box-shadow: 0 0 10px #17a2b8;
+            animation: pulse 1s infinite;
+        }
+
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -152,16 +170,20 @@
             background: #ffc107;
         }
 
+        .btn-emergency {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-emergency:hover:not(:disabled) {
+            background: #c82333;
+        }
+
         .timer {
             text-align: center;
             font-size: 14px;
             color: #666;
             margin-top: 10px;
-        }
-
-        .manual-count {
-            background: #fff3cd;
-            border-left-color: #ffc107;
         }
 
         /* 관리자 영역 */
@@ -205,8 +227,14 @@
         }
 
         .admin-content.active {
-            max-height: 200px;
+            max-height: 400px;
             margin-top: 15px;
+        }
+
+        .admin-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .btn-reset {
@@ -229,13 +257,128 @@
         .btn-reset:active {
             transform: scale(0.95);
         }
+
+        .btn-recovery {
+            background: #17a2b8;
+            color: white;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn-recovery:hover {
+            background: #138496;
+        }
+
+        .btn-recovery:active {
+            transform: scale(0.95);
+        }
+
+        .btn-recovery:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-force-reset {
+            background: #ff6b6b;
+            color: white;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            border: 2px solid #ff5252;
+        }
+
+        .btn-force-reset:hover {
+            background: #ff5252;
+            border-color: #ff3838;
+        }
+
+        .btn-force-reset:active {
+            transform: scale(0.95);
+        }
+
+        /* 알림 모달 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .modal-message {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .modal-button {
+            background: #667eea;
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-button:hover {
+            background: #5568d3;
+        }
+
+        .modal-button:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>👕 옷 접기 로봇</h1>
 
-        <!-- 판매 현황 -->
         <div class="status-card">
             <div class="status-item">
                 <span class="status-label">오늘 판매</span>
@@ -243,7 +386,6 @@
             </div>
         </div>
 
-        <!-- 로봇 완료 -->
         <div class="status-card">
             <div class="status-item">
                 <span class="status-label">🤖 로봇 완료</span>
@@ -251,15 +393,6 @@
             </div>
         </div>
 
-        <!-- 수동 포장 -->
-        <div class="status-card manual-count">
-            <div class="status-item">
-                <span class="status-label">👤 수동 포장</span>
-                <span class="status-value" id="manual-count">0</span>
-            </div>
-        </div>
-
-        <!-- 로봇 상태 -->
         <div class="status-card">
             <div class="status-item">
                 <span class="status-label">로봇 상태</span>
@@ -270,7 +403,6 @@
             </div>
         </div>
 
-        <!-- 버튼 -->
         <div class="button-group">
             <button class="btn btn-sales" id="btn-sales" onclick="addSale()">
                 판매 +1
@@ -278,24 +410,46 @@
             <button class="btn btn-robot" id="btn-robot" onclick="startRobot()">
                 로봇 작동 ▶
             </button>
+            <button class="btn btn-emergency" id="btn-emergency" onclick="emergencyStop()">
+                🛑 긴급정지
+            </button>
             <div class="timer" id="timer"></div>
         </div>
 
-        <!-- 관리자 영역 -->
         <div class="admin-section">
             <button class="admin-toggle" id="admin-toggle" onclick="toggleAdmin()">
                 <span>⚙️ 관리자 설정</span>
                 <span class="arrow">▼</span>
             </button>
             <div class="admin-content" id="admin-content">
-                <button class="btn-reset" onclick="resetData()">
-                    🔄 오늘 데이터 초기화
-                </button>
+                <div class="admin-buttons">
+                    <button class="btn-recovery" id="btn-recovery" onclick="manualRecovery()">
+                        🔧 로봇 초기화 (항시 가능)
+                    </button>
+                    <button class="btn-force-reset" onclick="forceReset()">
+                        ⚡ 강제 리셋 (비상용)
+                    </button>
+                    <button class="btn-reset" onclick="resetData()">
+                        🔄 데이터 초기화
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
+    <div class="modal" id="collision-modal">
+        <div class="modal-content">
+            <div class="modal-icon">⚠️</div>
+            <div class="modal-title">충돌 감지!</div>
+            <div class="modal-message">
+                로봇이 충돌(외력)을 감지했습니다.<br>
+                안전을 위해 정지했습니다.<br>
+                <b>관리자 설정 > 로봇 초기화</b>를 눌러주세요.
+            </div>
+            <button class="modal-button" onclick="closeModal()">확인</button>
+        </div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
@@ -318,13 +472,16 @@
         // DOM 요소
         const salesCountEl = document.getElementById('sales-count');
         const completedCountEl = document.getElementById('completed-count');
-        const manualCountEl = document.getElementById('manual-count');
         const robotStatusTextEl = document.getElementById('robot-status-text');
         const robotIndicatorEl = document.getElementById('robot-indicator');
         const btnRobot = document.getElementById('btn-robot');
+        const btnEmergency = document.getElementById('btn-emergency');
+        const btnRecovery = document.getElementById('btn-recovery');
         const timerEl = document.getElementById('timer');
+        const collisionModal = document.getElementById('collision-modal');
 
         let isRobotWorking = false;
+        let isEmergencyStopped = false;
 
         // Firebase 실시간 리스닝
         robotRef.on('value', (snapshot) => {
@@ -339,13 +496,14 @@
             const completedCount = data.completed_count || 0;
             completedCountEl.textContent = completedCount;
 
-            // 수동 포장 (판매 - 로봇완료)
-            const manualCount = Math.max(0, salesCount - completedCount);
-            manualCountEl.textContent = manualCount;
-
             // 로봇 상태
             const robotStatus = data.robot_status || 'waiting';
             updateRobotStatus(robotStatus);
+
+            // 충돌 감지 시 모달 표시
+            if (data.needs_recovery && robotStatus === 'collision') {
+                showCollisionModal();
+            }
         });
 
         // 로봇 상태 업데이트
@@ -356,20 +514,59 @@
                 btnRobot.disabled = true;
                 btnRobot.className = 'btn btn-robot working';
                 btnRobot.textContent = '작동 중...';
+                btnEmergency.disabled = false;
+                
+                // ⭐ [수정됨] 작동 중이어도 노란불 상황을 대비해 초기화 버튼 활성화
+                btnRecovery.disabled = false; 
+                
                 isRobotWorking = true;
-                startTimer(45); // 45초 타이머
+                isEmergencyStopped = false;
+                startTimer(50);
             } else if (status === 'waiting' || status === 'idle') {
                 robotStatusTextEl.textContent = '대기 중';
                 robotIndicatorEl.className = 'status-indicator waiting';
                 btnRobot.disabled = false;
                 btnRobot.className = 'btn btn-robot';
                 btnRobot.textContent = '로봇 작동 ▶';
+                btnEmergency.disabled = true;
+                
+                // ⭐ [수정됨] 대기 중이어도 초기화 버튼 항시 활성화
+                btnRecovery.disabled = false; 
+                
                 isRobotWorking = false;
+                isEmergencyStopped = false;
                 timerEl.textContent = '';
+            } else if (status === 'collision') {
+                robotStatusTextEl.textContent = '💥 충돌/외력 감지';
+                robotIndicatorEl.className = 'status-indicator collision';
+                btnRobot.disabled = true;
+                btnEmergency.disabled = true;
+                btnRecovery.disabled = false; // 활성화 유지
+                timerEl.textContent = '로봇 초기화 버튼을 눌러주세요';
+            } else if (status === 'recovering') {
+                robotStatusTextEl.textContent = '복구 중';
+                robotIndicatorEl.className = 'status-indicator recovering';
+                btnRobot.disabled = true;
+                btnEmergency.disabled = true;
+                
+                // 복구 중일 때는 중복 클릭 방지를 위해 비활성화하는 것이 좋음
+                btnRecovery.disabled = true; 
+                
+                timerEl.textContent = '복구 진행 중...';
+            } else if (status === 'emergency_stopped') {
+                robotStatusTextEl.textContent = '긴급 정지됨';
+                robotIndicatorEl.className = 'status-indicator emergency';
+                btnRobot.disabled = true;
+                btnEmergency.disabled = true;
+                btnRecovery.disabled = false; // 활성화 유지
+                isEmergencyStopped = true;
+                timerEl.textContent = '로봇 초기화 버튼을 눌러주세요';
             } else if (status === 'error') {
                 robotStatusTextEl.textContent = '에러 발생';
-                robotIndicatorEl.className = 'status-indicator';
+                robotIndicatorEl.className = 'status-indicator collision';
                 btnRobot.disabled = true;
+                btnEmergency.disabled = true;
+                btnRecovery.disabled = false; // 활성화 유지
             }
         }
 
@@ -410,6 +607,77 @@
             console.log('🤖 로봇 시작 명령 전송');
         }
 
+        // 긴급정지
+        function emergencyStop() {
+            const confirmed = confirm(
+                '⚠️ 긴급정지하시겠습니까?\n\n' +
+                '로봇이 즉시 멈추고 재시작이 필요합니다.'
+            );
+
+            if (confirmed) {
+                robotRef.update({
+                    emergency_stop: true,
+                    robot_status: 'emergency_stopped'
+                });
+                console.log('🛑 긴급정지 신호 전송');
+            }
+        }
+
+        // 수동 복구 (로봇 초기화)
+        function manualRecovery() {
+            const confirmed = confirm(
+                '🔧 로봇을 초기화하시겠습니까?\n\n' +
+                '현재 상태를 자동으로 판단하여 복구합니다.'
+            );
+
+            if (confirmed) {
+                robotRef.update({
+                    manual_recovery: true
+                });
+                console.log('🔧 수동 복구 명령 전송');
+            }
+        }
+
+        // ⭐ 강제 리셋 (비상용)
+        function forceReset() {
+            const confirmed = confirm(
+                '⚡ 강제 리셋하시겠습니까?\n\n' +
+                '이 기능은 비상 상황에서만 사용하세요:\n' +
+                '• 터미널이 비정상 종료된 경우\n' +
+                '• 로봇이 응답하지 않는 경우\n' +
+                '• 버튼이 모두 비활성화된 경우\n\n' +
+                '모든 상태가 초기화됩니다.'
+            );
+
+            if (confirmed) {
+                robotRef.update({
+                    force_reset: true
+                });
+                
+                // 1초 후 로컬 UI도 리셋
+                setTimeout(() => {
+                    robotStatusTextEl.textContent = '리셋 중...';
+                    robotIndicatorEl.className = 'status-indicator';
+                    console.log('⚡ 강제 리셋 명령 전송');
+                    
+                    // 2초 후 자동으로 정상 상태 표시
+                    setTimeout(() => {
+                        alert('✅ 강제 리셋 완료!\n\nPython 터미널을 다시 실행해주세요.');
+                    }, 2000);
+                }, 100);
+            }
+        }
+
+        // 충돌 모달 표시
+        function showCollisionModal() {
+            collisionModal.classList.add('active');
+        }
+
+        // 모달 닫기
+        function closeModal() {
+            collisionModal.classList.remove('active');
+        }
+
         // 관리자 영역 토글
         function toggleAdmin() {
             const adminToggle = document.getElementById('admin-toggle');
@@ -436,7 +704,10 @@
                     sales_count: 0,
                     completed_count: 0,
                     robot_status: 'waiting',
-                    robot_command: 'idle'
+                    robot_command: 'idle',
+                    current_step: 0,
+                    emergency_stop: false,
+                    needs_recovery: false
                 });
                 console.log('🔄 데이터 초기화 완료');
                 alert('✅ 데이터가 초기화되었습니다!');
